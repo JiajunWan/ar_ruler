@@ -10,4 +10,12 @@ class AnchorInfoBean {
     Anchor getAnchor() {
         return this.anchor;
     }
+
+    double getLength() {
+        return this.length;
+    }
+
+    void setLength(double var1) {
+        this.length = var1;
+    }
 }

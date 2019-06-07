@@ -48,11 +48,11 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 
 public class MainActivity extends AppCompatActivity {
-    private ArrayList dataArray;
-    private ArrayList lineNodeArray;
-    private ArrayList sphereNodeArray;
-    private ArrayList startNodeArray;
-    private ArrayList endNodeArray;
+    private ArrayList dataArray = new ArrayList<AnchorInfoBean>();
+    private ArrayList lineNodeArray = new ArrayList<Node>();
+    private ArrayList sphereNodeArray = new ArrayList<Node>();
+    private ArrayList startNodeArray = new ArrayList<Node>();
+    private ArrayList endNodeArray = new ArrayList<Node>();
     private AnchorNode startNode;
     private HashMap _$_findViewCache;
 
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Fragment fragment;
                 ArSceneView arSceneView;
-                switch(dataArray.size()) {
+                switch (dataArray.size()) {
                     case 0:
                         ToastUtils.showLong("No Record");
                         break;
@@ -87,26 +87,26 @@ public class MainActivity extends AppCompatActivity {
                         if (fragment == null) {
                             throw new ClassCastException("null cannot be cast to non-null type ArFragment");
                         }
-                        arSceneView = ((ArFragment)fragment).getArSceneView();
+                        arSceneView = ((ArFragment) fragment).getArSceneView();
                         arSceneView.getScene().removeChild(startNode);
                         break;
                     default:
                         dataArray.remove(dataArray.size() - 1);
                         int index = startNodeArray.size() - 1;
-                        ((Node)startNodeArray.get(index)).removeChild((Node)lineNodeArray.remove(index));
-                        ((Node)endNodeArray.get(index)).removeChild((Node)sphereNodeArray.remove(index + 1));
+                        ((Node) startNodeArray.get(index)).removeChild((Node) lineNodeArray.remove(index));
+                        ((Node) endNodeArray.get(index)).removeChild((Node) sphereNodeArray.remove(index + 1));
                         fragment = getSupportFragmentManager().findFragmentById(R.id.UI_ArSceneView);
                         if (fragment == null) {
                             throw new ClassCastException("null cannot be cast to non-null type ArFragment");
                         }
-                        arSceneView = ((ArFragment)fragment).getArSceneView();
-                        arSceneView.getScene().removeChild((Node)startNodeArray.remove(index));
+                        arSceneView = ((ArFragment) fragment).getArSceneView();
+                        arSceneView.getScene().removeChild((Node) startNodeArray.remove(index));
                         fragment = getSupportFragmentManager().findFragmentById(R.id.UI_ArSceneView);
                         if (fragment == null) {
                             throw new ClassCastException("null cannot be cast to non-null type ArFragment");
                         }
-                        arSceneView = ((ArFragment)fragment).getArSceneView();
-                        arSceneView.getScene().removeChild((Node)endNodeArray.remove(index));
+                        arSceneView = ((ArFragment) fragment).getArSceneView();
+                        arSceneView.getScene().removeChild((Node) endNodeArray.remove(index));
                 }
             }
         });
@@ -117,9 +117,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (dataArray.size() < 4) {
                     ToastUtils.showLong("At least four points");
-                }
-                else {
-                    ArrayList tempJsonArray = new ArrayList<Double>();
+                } else {
+                    ArrayList tempJsonArray = new ArrayList();
                     Iterable dataArray = MainActivity.this.dataArray;
                     int i = 0;
 
@@ -149,11 +148,68 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     Intent var19 = new Intent();
-                    var19.setClass((Context)MainActivity.this, SecondActivity.class);
+                    var19.setClass((Context) MainActivity.this, SecondActivity.class);
                     var19.putExtra("url", );
                     ActivityUtils.startActivity(var19);
                 }
             }
         });
+        initAr();
+    }
+
+        private void initAr() {
+            Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.UI_ArSceneView);
+            if (fragment == null) {
+                throw new ClassCastException("null cannot be cast to non-null type ArFragment");
+            } else {
+                ((ArFragment) fragment).setOnTapArPlaneListener((OnTapArPlaneListener) (new OnTapArPlaneListener() {
+                    public final void onTapPlane(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
+                        Anchor var10003 = hitResult.createAnchor();
+                        AnchorInfoBean anchorInfoBean = new AnchorInfoBean("", var10003, 0.0D);
+                        MainActivity.this.dataArray.add(anchorInfoBean);
+                        if (dataArray.size() > 1) {
+                            Anchor endAnchor = ((AnchorInfoBean) dataArray.get(dataArray.size() - 1)).getAnchor();
+                            Anchor startAnchor = ((AnchorInfoBean) dataArray.get(dataArray.size() - 2)).getAnchor();
+                            Pose startPose = endAnchor.getPose();
+                            Pose endPose = startAnchor.getPose();
+                            float dx = startPose.tx() - endPose.tx();
+                            float dy = startPose.ty() - endPose.ty();
+                            float dz = startPose.tz() - endPose.tz();
+                            anchorInfoBean.setLength(Math.sqrt((double) (dx * dx + dy * dy + dz * dz)));
+                            MainActivity.this.drawLine(startAnchor, endAnchor, anchorInfoBean.getLength());
+                        } else {
+                            MainActivity.this.startNode = new AnchorNode(hitResult.createAnchor());
+                            AnchorNode var10000 = MainActivity.access$getStartNode$p(MainActivity.this);
+                            Fragment var10001 = MainActivity.this.getSupportFragmentManager().findFragmentById(id.UI_ArSceneView);
+                            if (var10001 == null) {
+                                throw new ClassCastException("null cannot be cast to non-null type ArFragment");
+                            }
+
+                            ArSceneView var12 = ((ArFragment) var10001).getArSceneView();
+                            var10000.setParent((NodeParent) var12.getScene());
+                            MaterialFactory.makeOpaqueWithColor((Context) MainActivity.this, new Color(0.33F, 0.87F, 0.0F)).thenAccept((Consumer) (new Consumer() {
+                                // $FF: synthetic method
+                                // $FF: bridge method
+                                public void accept(Object var1) {
+                                    this.accept((Material) var1);
+                                }
+
+                                public final void accept(Material material) {
+                                    ModelRenderable sphere = ShapeFactory.makeSphere(0.02F, Vector3.zero(), material);
+                                    ArrayList var10000 = MainActivity.this.sphereNodeArray;
+                                    Node var3 = new Node();
+                                    ArrayList var6 = var10000;
+                                    int var5 = false;
+                                    var3.setParent((NodeParent) MainActivity.access$getStartNode$p(MainActivity.this));
+                                    var3.setLocalPosition(Vector3.zero());
+                                    var3.setRenderable((Renderable) sphere);
+                                    var6.add(var3);
+                                }
+                            }));
+                        }
+
+                    }
+                }));
+            }
     }
 }
