@@ -7,6 +7,17 @@ class AnchorInfoBean {
     private Anchor anchor;
     private Double length;
 
+    AnchorInfoBean(String dataText, Anchor anchor, double length) {
+        super();
+        this.dataText = dataText;
+        this.anchor = anchor;
+        this.length = length;
+    }
+
+    String getDataText() {
+        return this.dataText;
+    }
+
     Anchor getAnchor() {
         return this.anchor;
     }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ar_ruler</string>
+    <string name="ar_last">ar_last</string>
+    <string name="ar_post">ar_post</string>
 </resources>
