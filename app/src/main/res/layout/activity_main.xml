@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
     <fragment
+        class="com.example.ar_ruler.MyArFragment"
         android:id="@+id/UI_ArSceneView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
