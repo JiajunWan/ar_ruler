@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this, SecondActivity.class);
-                intent.putExtra("url", "sdf");
+                intent.putExtra("NodePositionArray", tempJsonArray);
                 ActivityUtils.startActivity(intent);
             }
         });
