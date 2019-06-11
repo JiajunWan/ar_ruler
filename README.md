@@ -1,2 +1,2 @@
 # ECE150 Final Project
-- AR Ruler
+## AR Ruler
