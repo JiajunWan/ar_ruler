@@ -7,7 +7,7 @@ import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 
-public class FaceToCameraNode extends Node {
+public class CameraNode extends Node {
     public void onUpdate(FrameTime p0) {
         Scene scene = this.getScene();
         if (scene != null) {
